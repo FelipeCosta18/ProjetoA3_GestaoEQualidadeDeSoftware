@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Livraria{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .login-container {
+            background: white;
+            padding: 40px 30px 30px 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            animation: fadeInUp 1s cubic-bezier(.39,.575,.56,1.000) both;
+        }
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .login-container h2 {
+            margin-bottom: 24px;
+            font-size: 28px;
+            color: #333;
+            font-weight: 700;
+        }
+        .login-container .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+        .login-container .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .login-container .form-control {
+            border: 1px solid #ddd;
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 8px;
+            width: 100%;
+            transition: box-shadow 0.3s;
+        }
+        .login-container .form-control:focus {
+            box-shadow: 0 0 0 2px #007bff33;
+            border-color: #007bff;
+        }
+        .login-container .form-check-label {
+            font-size: 14px;
+        }
+        .login-container .btn {
+            background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 17px;
+            font-weight: 600;
+            box-shadow: 0 4px 14px 0 rgba(0,123,255,0.10);
+            transition: background 0.3s, transform 0.2s;
+        }
+        .login-container .btn:hover {
+            background: linear-gradient(90deg, #0056b3 0%, #007bff 100%);
+            transform: translateY(-2px) scale(1.03);
+        }
+        .login-container p {
+            margin-top: 22px;
+            font-size: 15px;
+        }
+        .login-container p a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .login-container p a:hover {
+            text-decoration: underline;
+        }
+        .icon {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .fade-out {
+            animation: fadeOut 0.7s forwards;
+        }
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+        }
+        .alert {
+            margin-bottom: 18px;
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translateX(-2px); }
+            20%, 80% { transform: translateX(4px); }
+            30%, 50%, 70% { transform: translateX(-8px); }
+            40%, 60% { transform: translateX(8px); }
+        }
+        .reg-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            animation: fadeIn 0.5s;
+        }
+        .reg-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="loginBox">
+        <h2>Login</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                {% if category == 'success' %}
+                    <div class="reg-success" role="alert">{{ message }}</div>
+                {% elif category == 'danger' %}
+                    <div class="reg-error" role="alert">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('login') }}" id="loginForm">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <label for="username">
+                    <span class="icon"><i class="fas fa-user"></i></span> {{ form.username.label.text }}
+                </label>
+                {{ form.username(class="form-control", id="username") }}
+            </div>
+            <div class="form-group">
+                <label for="password">
+                    <span class="icon"><i class="fas fa-lock"></i></span> {{ form.password.label.text }}
+                </label>
+                {{ form.password(class="form-control", id="password") }}
+            </div>
+            <div class="form-group form-check">
+                {{ form.remember_me(class="form-check-input", id="remember_me") }}
+                <label class="form-check-label" for="remember_me"> {{ form.remember_me.label.text }} </label>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <p>Não tem uma conta? <a href="{{ url_for('register') }}">Registrar-se</a></p>
+    </div>
+    <script>
+        // Transição animada ao logar
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const loginBox = document.getElementById('loginBox');
+            loginBox.classList.add('fade-out');
+        });
+    </script>
+</body>
+</html>
