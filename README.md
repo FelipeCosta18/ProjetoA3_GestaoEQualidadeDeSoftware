@@ -60,3 +60,43 @@ python -m venv venv
 source venv/bin/activate  # Linux/macOS
 venv\Scripts\activate     # Windows
 ```
+3. Instale as dependências (requirements.txt):
+```bash
+pip install -r requirements.txt
+```
+4. Execute a aplicação Flask:
+```bash
+flask run
+```
+5. Acesse no navegador:
+```bash
+http://127.0.0.1:5000
+```
+6. Para executar os testes (opcional):
+```bash
+python -m pytest -v
+```
+
+
+
+## ✅ Melhorias na Refatoração
+
+- Código mais limpo, organizado e legível.
+- Redução de redundâncias e código espaguete.
+- Separação clara de responsabilidades (MVC aplicado no Flask).
+- Interface web amigável utilizando HTML e CSS.
+- Substituição do banco de dados externo (MySQL) por um banco leve e embarcado (SQLite).
+- Facilidade de deploy e execução sem dependências externas complexas.
+- Implementação de testes automatizados.
+
+
+
+## 📜 Licença
+Este projeto está licenciado sob os termos da **GNU General Public License (GPL)**.
+
+Isso significa que:
+- Você pode usar, modificar e distribuir este projeto, desde que qualquer derivado também mantenha a mesma licença GPL.
+- O código-fonte estará sempre disponível para os usuários.
+- Consulte o arquivo [`LICENSE`](./LICENSE) para mais detalhes.
+
+Para mais informações sobre a licença, acesse: [https://www.gnu.org/licenses/gpl-3.0.html](https://www.gnu.org/licenses/gpl-3.0.html)
