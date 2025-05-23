@@ -27,9 +27,12 @@ def create_app():
     login.init_app(app)
 
     app.jinja_env.filters['br_datetime'] = br_datetime
-    
+
+    from . import models
+    from .routes import bp as main_bp
+    app.register_blueprint(main_bp)
+
     with app.app_context():
-        from . import routes, models
         db.create_all()
         
         @login.user_loader

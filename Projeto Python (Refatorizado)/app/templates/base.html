@@ -13,12 +13,12 @@
 			<nav class="sidebar">
 				<div class="sidebar-heading">Livraria</div>
 				<div class="list-group list-group-flush">
-					<a href="{{ url_for('index') }}" class="list-group-item list-group-item-action"><i class="fas fa-tachometer-alt"></i> Dashboards</a>
-					<a href="{{ url_for('manage_books') }}" class="list-group-item list-group-item-action"><i class="fas fa-book"></i> Gerenciar Livros</a>
-					<a href="{{ url_for('manage_persons') }}" class="list-group-item list-group-item-action"><i class="fas fa-users"></i> Gerenciar Pessoas</a>
-					<a href="{{ url_for('borrow_book') }}" class="list-group-item list-group-item-action"><i class="fas fa-book-reader"></i> Emprestar Livro</a>
-					<a href="{{ url_for('view_historico') }}" class="list-group-item list-group-item-action"><i class="fas fa-history"></i> Ver Histórico</a>
-					<a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+					<a href="{{ url_for('main.index') }}" class="list-group-item list-group-item-action"><i class="fas fa-tachometer-alt"></i> Dashboards</a>
+					<a href="{{ url_for('main.manage_books') }}" class="list-group-item list-group-item-action"><i class="fas fa-book"></i> Gerenciar Livros</a>
+					<a href="{{ url_for('main.manage_persons') }}" class="list-group-item list-group-item-action"><i class="fas fa-users"></i> Gerenciar Pessoas</a>
+					<a href="{{ url_for('main.borrow_book') }}" class="list-group-item list-group-item-action"><i class="fas fa-book-reader"></i> Emprestar Livro</a>
+					<a href="{{ url_for('main.view_historico') }}" class="list-group-item list-group-item-action"><i class="fas fa-history"></i> Ver Histórico</a>
+					<a href="{{ url_for('main.logout') }}" class="list-group-item list-group-item-action text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
 				</div>
 			</nav>
 			<div class="container-fluid" id="content">

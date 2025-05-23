@@ -58,7 +58,7 @@
 					<td>{% if entry.return_date %}{{ entry.return_date|br_datetime('%d/%m/%Y') }}{% else %}Em Aberto{% endif %}</td>
 					<td>
 						{% if not entry.return_date %}
-						<form method="POST" action="{{ url_for('devolver_livro', historico_id=entry.id) }}" style="display:inline;">
+						<form method="POST" action="{{ url_for('main.devolver_livro', historico_id=entry.id) }}" style="display:inline;">
 							<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 							<button type="submit" class="btn btn-success btn-sm">Devolver</button>
 						</form>

@@ -97,8 +97,8 @@
 					<td>{{ book.creator.username if book.creator else 'N/A' }}</td>
 					<td>{{ book.updater.username if book.updater else 'N/A' }}</td>
 					<td>
-						<a href="{{ url_for('update_book', book_id=book.id) }}" class="btn btn-warning btn-sm">Editar</a>
-						<form action="{{ url_for('delete_book', book_id=book.id) }}" method="post" style="display: inline">
+						<a href="{{ url_for('main.update_book', book_id=book.id) }}" class="btn btn-warning btn-sm">Editar</a>
+						<form action="{{ url_for('main.delete_book', book_id=book.id) }}" method="post" style="display: inline">
 							{{ form.hidden_tag() }}
 							<button type="submit" class="btn btn-danger btn-sm">Excluir</button>
 						</form>

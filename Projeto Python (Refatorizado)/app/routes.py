@@ -1,14 +1,14 @@
 import json
-from flask import render_template, redirect, url_for, request, flash, jsonify
+from flask import render_template, redirect, url_for, request, flash, jsonify, Blueprint
 from flask_login import login_user, logout_user, current_user, login_required
 from app import db
 from app.models import *
 from app.forms import *
-from flask import current_app as app
 from datetime import datetime
 
+bp = Blueprint('main', __name__)
 
-@app.route('/')
+@bp.route('/')
 @login_required
 def index():
     #Dados para graficos 
@@ -43,10 +43,10 @@ def index():
         unavailable_books=unavailable_books
     )
 
-@app.route("/login", methods=['GET','POST'])
+@bp.route("/login", methods=['GET','POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("index"))
+        return redirect(url_for("main.index"))
     
     form = LoginForm()
     show_message = False
@@ -58,12 +58,12 @@ def login():
         
         if user is None or not user.check_password(form.password.data):
             flash("Nome de usuário ou senha incorretos", "danger")
-            return redirect(url_for("login"))
+            return redirect(url_for("main.login"))
         
         login_user(user, remember=form.remember_me.data)
         user.last_login = datetime.utcnow()
         db.session.commit()
-        return redirect(url_for("index"))
+        return redirect(url_for("main.index"))
     
     # Remove mensagem padrão do Flask-Login
     if 'message' in request.args:
@@ -75,15 +75,15 @@ def login():
         form=form
     )
 
-@app.route("/logout", methods=['GET','POST'])
+@bp.route("/logout", methods=['GET','POST'])
 def logout():
     logout_user()
-    return redirect(url_for("login"))
+    return redirect(url_for("main.login"))
    
-@app.route("/register", methods=['GET','POST'])
+@bp.route("/register", methods=['GET','POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("index"))
+        return redirect(url_for("main.index"))
     
     form = RegistrationForm()
     
@@ -95,14 +95,14 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash("Usuário registrado com sucesso! Faça login para continuar.", "success")
-        return redirect(url_for("login"))
+        return redirect(url_for("main.login"))
         
     return render_template(
         "register.html",
         form = form
     )
     
-@app.route("/books", methods=["GET","POST"])
+@bp.route("/books", methods=["GET","POST"])
 @login_required
 def manage_books():
     form = BookForm()
@@ -118,7 +118,7 @@ def manage_books():
         db.session.add(book)
         db.session.commit()
         
-        return redirect(url_for('manage_books'))
+        return redirect(url_for('main.manage_books'))
         
     books = Book.query.all()
     return render_template(
@@ -127,7 +127,7 @@ def manage_books():
         books = books
     )
     
-@app.route("/books/delete/<int:book_id>", methods=["GET","POST"])
+@bp.route("/books/delete/<int:book_id>", methods=["GET","POST"])
 def delete_book(book_id):
     book = Book.query.get_or_404(book_id)
     
@@ -138,10 +138,10 @@ def delete_book(book_id):
     #Deletar no meu banco de dados
     db.session.delete(book)
     db.session.commit()
-    return redirect(url_for("manage_books"))
+    return redirect(url_for("main.manage_books"))
 
 
-@app.route("/books/update/<int:book_id>", methods=["GET","POST"])
+@bp.route("/books/update/<int:book_id>", methods=["GET","POST"])
 @login_required
 def update_book(book_id):
     book = Book.query.get_or_404(book_id)
@@ -155,14 +155,14 @@ def update_book(book_id):
         book.updated_by = current_user.id
         db.session.commit()
         
-        return redirect(url_for("manage_books"))
+        return redirect(url_for("main.manage_books"))
     
     return render_template(
         "book_form.html",
         form=form
     )
     
-@app.route("/persons", methods=["GET","POST"])
+@bp.route("/persons", methods=["GET","POST"])
 @login_required
 def manage_persons():
     form = PersonForm()
@@ -177,7 +177,7 @@ def manage_persons():
         db.session.add(person)
         db.session.commit()
         
-        return redirect(url_for('manage_persons'))
+        return redirect(url_for('main.manage_persons'))
         
     persons = Person.query.all()
     return render_template(
@@ -186,7 +186,7 @@ def manage_persons():
         persons = persons
     )
     
-@app.route("/persons/update/<int:person_id>", methods=["GET","POST"])
+@bp.route("/persons/update/<int:person_id>", methods=["GET","POST"])
 @login_required
 def update_person(person_id):
     person = Person.query.get_or_404(person_id)
@@ -199,14 +199,14 @@ def update_person(person_id):
         person.updated_by = current_user.id
         db.session.commit()
         
-        return redirect(url_for("manage_persons"))
+        return redirect(url_for("main.manage_persons"))
     
     return render_template(
         "person_form.html",
         form=form
     )
     
-@app.route("/persons/delete/<int:person_id>", methods=["GET","POST"])
+@bp.route("/persons/delete/<int:person_id>", methods=["GET","POST"])
 @login_required
 def delete_person(person_id):
     person = Person.query.get_or_404(person_id)
@@ -218,9 +218,9 @@ def delete_person(person_id):
     #Deletar no meu banco de dados
     db.session.delete(person)
     db.session.commit()
-    return redirect(url_for("manage_persons"))
+    return redirect(url_for("main.manage_persons"))
 
-@app.route("/borrow", methods=["GET","POST"])
+@bp.route("/borrow", methods=["GET","POST"])
 @login_required
 def borrow_book():
     form = BorrowForm()
@@ -249,14 +249,14 @@ def borrow_book():
         )
         db.session.add(historico)
         db.session.commit()
-        return redirect(url_for("borrow_book"))
+        return redirect(url_for("main.borrow_book"))
          
     return render_template(
         "borrow_form.html",
         form=form
     )
 
-@app.route("/historico")
+@bp.route("/historico")
 @login_required
 def view_historico():
     historico = Historico.query.order_by(Historico.borrow_date.desc()).all()
@@ -265,7 +265,7 @@ def view_historico():
         historico=historico
     )
 
-@app.route("/devolver/<int:historico_id>", methods=["POST"])
+@bp.route("/devolver/<int:historico_id>", methods=["POST"])
 @login_required
 def devolver_livro(historico_id):
     historico = Historico.query.get_or_404(historico_id)
@@ -279,4 +279,4 @@ def devolver_livro(historico_id):
         flash("Livro devolvido com sucesso!", "success")
     else:
         flash("Este empréstimo já foi devolvido.", "warning")
-    return redirect(url_for("view_historico"))
+    return redirect(url_for("main.view_historico"))
