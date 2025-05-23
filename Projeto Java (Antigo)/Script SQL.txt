@@ -1,0 +1,39 @@
+Nome do BD: projeto_biblioteca
+
+
+CREATE TABLE cliente (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    cpf VARCHAR(14) NOT NULL,
+    endereco VARCHAR(200) NOT NULL,
+    contato VARCHAR(20) NOT NULL
+);
+
+
+CREATE TABLE genero (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE
+); 
+
+
+CREATE TABLE livro (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+    autor VARCHAR(150) NOT NULL,
+    idGenero INT NOT NULL,
+    quantidade INT NOT NULL,
+    isbn VARCHAR(20) NOT NULL UNIQUE,
+    FOREIGN KEY (idGenero) REFERENCES genero(id)
+);
+
+
+CREATE TABLE emprestimo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    idCliente INT NOT NULL,
+    idLivro INT NOT NULL,
+    dataEmprestimo VARCHAR(50) NOT NULL,
+    dataDevolucao VARCHAR(50),
+    FOREIGN KEY (idCliente) REFERENCES cliente(id),
+    FOREIGN KEY (idLivro) REFERENCES livro(id)
+);
