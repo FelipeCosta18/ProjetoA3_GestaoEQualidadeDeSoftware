@@ -129,12 +129,12 @@ def manage_books():
     
 @bp.route("/books/delete/<int:book_id>", methods=["GET","POST"])
 def delete_book(book_id):
-    book = Book.query.get_or_404(book_id)
-    
+    book = db.session.get(Book, book_id)
+    if book is None:
+        return redirect(url_for("main.manage_books"))
     # Remover todas as referencias nas outras tabelas 
     Borrow.query.filter_by(book_id=book_id).delete()
     Historico.query.filter_by(book_id=book_id).delete()
-    
     #Deletar no meu banco de dados
     db.session.delete(book)
     db.session.commit()
@@ -144,7 +144,9 @@ def delete_book(book_id):
 @bp.route("/books/update/<int:book_id>", methods=["GET","POST"])
 @login_required
 def update_book(book_id):
-    book = Book.query.get_or_404(book_id)
+    book = db.session.get(Book, book_id)
+    if book is None:
+        return redirect(url_for("main.manage_books"))
     form = BookForm(obj=book)
     
     if form.validate_on_submit():
@@ -189,7 +191,9 @@ def manage_persons():
 @bp.route("/persons/update/<int:person_id>", methods=["GET","POST"])
 @login_required
 def update_person(person_id):
-    person = Person.query.get_or_404(person_id)
+    person = db.session.get(Person, person_id)
+    if person is None:
+        return redirect(url_for("main.manage_persons"))
     form = PersonForm(obj=person)
     
     if form.validate_on_submit():
@@ -209,12 +213,12 @@ def update_person(person_id):
 @bp.route("/persons/delete/<int:person_id>", methods=["GET","POST"])
 @login_required
 def delete_person(person_id):
-    person = Person.query.get_or_404(person_id)
-    
+    person = db.session.get(Person, person_id)
+    if person is None:
+        return redirect(url_for("main.manage_persons"))
     # Remover todas as referencias nas outras tabelas 
     Borrow.query.filter_by(person_id=person_id).delete()
     Historico.query.filter_by(person_id=person_id).delete()
-    
     #Deletar no meu banco de dados
     db.session.delete(person)
     db.session.commit()
@@ -224,10 +228,8 @@ def delete_person(person_id):
 @login_required
 def borrow_book():
     form = BorrowForm()
-
     form.book_id.choices = [(book.id, book.title) for book in Book.query.filter_by(available=True).all()]
     form.person_id.choices = [(person.id, f"{person.nome} {person.sobrenome}") for person in Person.query.all()]
-    
     if form.validate_on_submit():
         borrow = Borrow(
             book_id=form.book_id.data,
@@ -235,12 +237,10 @@ def borrow_book():
             created_by=current_user.id,
             updated_by=current_user.id 
         )
-        book = Book.query.get(form.book_id.data)
+        book = db.session.get(Book, form.book_id.data)
         book.available = False
-        
         db.session.add(borrow)
         db.session.commit()
-        
         #Salvar no historico 
         historico = Historico(
             book_id = form.book_id.data,
@@ -250,7 +250,6 @@ def borrow_book():
         db.session.add(historico)
         db.session.commit()
         return redirect(url_for("main.borrow_book"))
-         
     return render_template(
         "borrow_form.html",
         form=form
@@ -268,11 +267,14 @@ def view_historico():
 @bp.route("/devolver/<int:historico_id>", methods=["POST"])
 @login_required
 def devolver_livro(historico_id):
-    historico = Historico.query.get_or_404(historico_id)
+    historico = db.session.get(Historico, historico_id)
+    if historico is None:
+        flash("Empréstimo não encontrado.", "danger")
+        return redirect(url_for("main.view_historico"))
     if historico.return_date is None:
         historico.return_date = datetime.utcnow()
         # Também marca o livro como disponível novamente
-        book = Book.query.get(historico.book_id)
+        book = db.session.get(Book, historico.book_id)
         if book:
             book.available = True
         db.session.commit()

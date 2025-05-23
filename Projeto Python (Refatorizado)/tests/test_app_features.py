@@ -158,7 +158,7 @@ def test_borrow_and_return_book():
     }, follow_redirects=True)
     assert b'devolucao' in response.data.lower() or response.status_code == 200
     with app.app_context():
-        book = Book.query.get(book_id)
+        book = db.session.get(Book, book_id)
         assert not book.available
         historico = Historico.query.filter_by(book_id=book_id, person_id=person_id, return_date=None).first()
         assert historico is not None
@@ -167,7 +167,7 @@ def test_borrow_and_return_book():
     response = client.post(f'/devolver/{historico_id}', follow_redirects=True)
     assert b'devolvido' in response.data.lower() or response.status_code == 200
     with app.app_context():
-        book = Book.query.get(book_id)
+        book = db.session.get(Book, book_id)
         assert book.available
     os.close(db_fd)
     os.unlink(db_path)

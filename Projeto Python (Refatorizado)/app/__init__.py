@@ -10,7 +10,6 @@ db = SQLAlchemy()
 csrf = CSRFProtect()
 migrate = Migrate()
 login = LoginManager()
-login.login_view = 'login'
 
 def br_datetime(value, format='%d/%m/%Y'):
     if isinstance(value, datetime):
@@ -25,6 +24,7 @@ def create_app():
     csrf.init_app(app)
     migrate.init_app(app)
     login.init_app(app)
+    login.login_view = 'main.login'
 
     app.jinja_env.filters['br_datetime'] = br_datetime
 
@@ -37,6 +37,6 @@ def create_app():
         
         @login.user_loader
         def load_user(user_id):
-            return models.User.query.get(int(user_id))
+            return db.session.get(models.User, int(user_id))
         
         return app
